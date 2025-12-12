@@ -17,6 +17,8 @@ package com.example.lunchtray
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -35,7 +37,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.lunchtray.datasource.DataSource
+import com.example.lunchtray.ui.AccompanimentMenuScreen
+import com.example.lunchtray.ui.EntreeMenuScreen
 import com.example.lunchtray.ui.OrderViewModel
+import com.example.lunchtray.ui.SideDishMenuScreen
 import com.example.lunchtray.ui.StartOrderScreen
 
 enum class ScreenNavi (@StringRes val title: Int) {
@@ -104,9 +110,65 @@ fun LunchTrayApp() {
                         .fillMaxSize()
                 )
             }
+            composable(route = ScreenNavi.Entree.name) {
+                EntreeMenuScreen(
+                    options = DataSource.entreeMenuItems,
+                    onCancelButtonClicked = {
+                        viewModel.resetOrder()
+                        navController.popBackStack(ScreenNavi.Start.name, inclusive = false)
+                    },
+                    onNextButtonClicked = {
+                        navController.navigate(ScreenNavi.SideDish.name)
+                    },
+                    onSelectionChanged = { item ->
+                        viewModel.updateEntree(item)
+                    },
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                )
+            }
+
+            composable(route = ScreenNavi.SideDish.name) {
+                SideDishMenuScreen(
+                    options = DataSource.sideDishMenuItems,
+                    onCancelButtonClicked = {
+                        viewModel.resetOrder()
+                        navController.popBackStack(ScreenNavi.Start.name, inclusive = false)
+                    },
+                    onNextButtonClicked = {
+                        navController.navigate(ScreenNavi.Accompaniment.name)
+                    },
+                    onSelectionChanged = { item ->
+                        viewModel.updateSideDish(item)
+                    },
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                )
+            }
+
+            composable(route = ScreenNavi.Accompaniment.name) {
+                AccompanimentMenuScreen(
+                    options = DataSource.accompanimentMenuItems,
+                    onCancelButtonClicked = {
+                        viewModel.resetOrder()
+                        navController.popBackStack(ScreenNavi.Start.name, inclusive = false)
+                    },
+                    onNextButtonClicked = {
+                        navController.navigate(ScreenNavi.Checkout.name)
+                    },
+                    onSelectionChanged = { item ->
+                        viewModel.updateAccompaniment(item)
+                    },
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                )
+            }
         }
     }
 }
+
+
+
 
 
 
