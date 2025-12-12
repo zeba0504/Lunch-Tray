@@ -16,6 +16,7 @@
 package com.example.lunchtray
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -30,10 +31,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.lunchtray.ui.OrderViewModel
-
+import com.example.lunchtray.ui.StartOrderScreen
 
 enum class ScreenNavi (@StringRes val title: Int) {
     Start(title = R.string.app_name),
@@ -87,7 +90,24 @@ fun LunchTrayApp() {
         }
     ) { innerPadding ->
         val uiState by viewModel.uiState.collectAsState()
-
-
+        NavHost(
+            navController = navController,
+            startDestination = ScreenNavi.Start.name,
+            modifier = Modifier
+        ) {
+            composable(route = ScreenNavi.Start.name) {
+                StartOrderScreen(
+                    onStartOrderButtonClicked = {
+                        navController.navigate(ScreenNavi.Entree.name)
+                    },
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            }
+        }
     }
 }
+
+
+
+
