@@ -17,6 +17,7 @@ package com.example.lunchtray
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -31,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -39,6 +41,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.lunchtray.datasource.DataSource
 import com.example.lunchtray.ui.AccompanimentMenuScreen
+import com.example.lunchtray.ui.CheckoutScreen
 import com.example.lunchtray.ui.EntreeMenuScreen
 import com.example.lunchtray.ui.OrderViewModel
 import com.example.lunchtray.ui.SideDishMenuScreen
@@ -75,6 +78,7 @@ fun LunchTrayAppBar(
         }
     )
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LunchTrayApp() {
@@ -96,10 +100,11 @@ fun LunchTrayApp() {
         }
     ) { innerPadding ->
         val uiState by viewModel.uiState.collectAsState()
+
         NavHost(
             navController = navController,
             startDestination = ScreenNavi.Start.name,
-            modifier = Modifier
+            modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = ScreenNavi.Start.name) {
                 StartOrderScreen(
@@ -110,6 +115,7 @@ fun LunchTrayApp() {
                         .fillMaxSize()
                 )
             }
+
             composable(route = ScreenNavi.Entree.name) {
                 EntreeMenuScreen(
                     options = DataSource.entreeMenuItems,
@@ -163,13 +169,26 @@ fun LunchTrayApp() {
                         .verticalScroll(rememberScrollState())
                 )
             }
+
+            composable(route = ScreenNavi.Checkout.name) {
+                CheckoutScreen(
+                    orderUiState = uiState,
+                    onCancelButtonClicked = {
+                        viewModel.resetOrder()
+                        navController.popBackStack(ScreenNavi.Start.name, inclusive = false)
+                    },
+                    onNextButtonClicked = {
+                        viewModel.resetOrder()
+                        navController.popBackStack(ScreenNavi.Start.name, inclusive = false)
+                    },
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .padding(
+                            start = dimensionResource(R.dimen.padding_medium),
+                            end = dimensionResource(R.dimen.padding_medium),
+                        )
+                )
+            }
         }
     }
 }
-
-
-
-
-
-
-
